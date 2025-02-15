@@ -20,7 +20,7 @@ def save_eps_to_file(eps_values, filename="eps_data.json"):
         json.dump(eps_values, file, indent=4)
 
 if __name__ == "__main__":
-    stock_symbol = "JPM"
+    stock_symbol = "AAPL"
     api_key = "Z0IXDUZQ5UQTWXK9"
     num = "2"
     eps_values = get_historical_eps(stock_symbol, api_key)

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import datetime
 
 file_name = "./data/eps_data.json"
-year_interval = 1
+year_interval = 10
 
 def calculate_g(file_name, year_interval): 
     with open(file_name, 'r') as file:
@@ -34,5 +34,3 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.xticks(rotation=45)
     plt.show()
-
-    print(g)

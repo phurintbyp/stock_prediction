@@ -37,8 +37,6 @@ df = pd.DataFrame(list(data.items()), columns=["Date", "Value"])
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values(by="Date")
 
-
-
 plt.figure(figsize=(12, 6))
 plt.plot(df["Date"], df["Value"], marker="o", linestyle="-", linewidth=2)
 plt.xlabel("Year")
