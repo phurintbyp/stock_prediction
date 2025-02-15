@@ -4,7 +4,7 @@ import json
 from linear_regression import Linear_regression
 
 # Load EPS data
-file_name = "./data/eps_data_2.json"
+file_name = "./data/eps_data.json"
 degree = 4
 
 with open(file_name, 'r') as file:
