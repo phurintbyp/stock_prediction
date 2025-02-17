@@ -6,7 +6,7 @@ import datetime
 
 # Full list of S&P 500 stock tickers (replace with actual full list)
 SP500_TICKERS = [
-    "AAPL", "NVDA", "MSFT", "AMZN", "GOOG", "GOOGL", "META", "TSLA", "AVGO", "BRK.B",
+    "AAPL", "NVDA", "MSFT", "AMZN", "GOOG", "GOOGL", "META", "TSLA", "AVGO",
     "WMT", "JPM", "LLY", "V", "MA", "ORCL", "UNH", "COST", "XOM", "NFLX",
     "HD", "PG", "JNJ", "BAC", "ABBV", "CRM", "TMUS", "KO", "CVX", "PLTR",
     "WFC", "CSCO", "ACN", "IBM", "PM", "ABT", "GE", "MS", "MCD", "AXP",
@@ -59,7 +59,7 @@ SP500_TICKERS = [
     "AES", "BWA", "HII", "FMC"
 ]
 
-API_KEY = "K4W4DXDQ5E18FS9X"
+API_KEY = "Z0IXDUZQ5UQTWXK9"
 DATA_FOLDER = "data_list"  # Folder to store individual stock data
 LAST_FETCH_FILE = "last_fetch_date.json"
 DAILY_LIMIT = 25  # Maximum requests per day

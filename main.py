@@ -26,29 +26,19 @@ lr = Linear_regression()
 lr.fit(year, eps, degree)
 
 # Extend for 10 more years beyond the last year
-last_year = year[-1][0]  # Get the last year in the dataset
-future_years = np.arange(last_year + 1, last_year + 11).reshape(-1, 1)  # Next 10 years
+last_year = year[-1][0]
+future_years = np.arange(last_year + 1, last_year + 11).reshape(-1, 1)
 
-# Combine existing and future years
 extended_years = np.vstack((year, future_years))
-
-# Predict EPS values for extended years
 predicted_eps = lr.predict(extended_years, degree)
 
-# Plot original data
 plt.figure(figsize=(12, 6))
 plt.scatter(year, eps, label="Actual Data", color="blue")
-
-# Plot extended predictions
 plt.plot(extended_years, predicted_eps, marker="o", linestyle="-", linewidth=2, color="red", label="Predicted Growth")
-
-# Formatting
 plt.xlabel("Year")
 plt.ylabel("Value")
 plt.title("Growth Rate Data (Extended for 10 Years)")
 plt.grid(True)
 plt.xticks(rotation=45)
 plt.legend()
-
-# Show the plot
 plt.show()
