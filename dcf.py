@@ -1,13 +1,14 @@
 import numpy as np
 
-fcf = [2126, 14895, 40319, 57180, 88597]
+# JPM data
+fcf = [80590000000, 49460000000, 99820000000, 100780000000, 79410000000]
 years = np.arange(1, len(fcf) + 1)
-wacc = 0.078 # Can be calculated further
-growth_rate = 0.03  # Can get from other code
+wacc = 0.1196 # Can be calculated further
+growth_rate = 0.0489  # Can get from other code
 fcf_n = fcf[-1] # FCF value of latest year
-debt = 47556
-cash = 66385
-shares_outstanding = 10456
+debt = 460790000000
+cash = 567230000000
+shares_outstanding = 2860600000
 
 # pv_fcf = sum([fcf[i] / (1 + wacc) ** years[i] for i in range(len(fcf))])
 pv_fcf = [fcf[i] / (1 + wacc) ** years[i] for i in range(len(fcf))]

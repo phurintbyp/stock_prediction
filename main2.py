@@ -67,8 +67,8 @@ class EPSPrediction:
         self.printvalue()
 
 # Example usage
-file_name = "./data_list/AAPL.json"
-degree = 4
+file_name = "./data_list/ABC.json"
+degree = 2
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
