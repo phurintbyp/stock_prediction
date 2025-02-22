@@ -59,7 +59,7 @@ SP500_TICKERS = [
     "AES", "BWA", "HII", "FMC"
 ]
 
-API_KEY = "Your API KEY"
+API_KEY = "VWZMI0HMRGA407QK"
 DATA_FOLDER = "data_list"  # Folder to store individual stock data
 LAST_FETCH_FILE = "last_fetch_date.json"
 DAILY_LIMIT = 25  # Maximum requests per day
