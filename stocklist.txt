@@ -505,7 +505,7 @@ FMC
 
 code tickers
 SP500_TICKERS = [
-    "AAPL", "NVDA", "MSFT", "AMZN", "GOOG", "GOOGL", "META", "TSLA", "AVGO", "BRK.B",
+    "AAPL", "NVDA", "MSFT", "AMZN", "GOOG", "GOOGL", "META", "TSLA", "AVGO",
     "WMT", "JPM", "LLY", "V", "MA", "ORCL", "UNH", "COST", "XOM", "NFLX",
     "HD", "PG", "JNJ", "BAC", "ABBV", "CRM", "TMUS", "KO", "CVX", "PLTR",
     "WFC", "CSCO", "ACN", "IBM", "PM", "ABT", "GE", "MS", "MCD", "AXP",

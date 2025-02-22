@@ -11,7 +11,6 @@ SP500_TICKERS = [
     "HD", "PG", "JNJ", "BAC", "ABBV", "CRM", "TMUS", "KO", "CVX", "PLTR",
     "WFC", "CSCO", "ACN", "IBM", "PM", "ABT", "GE", "MS", "MCD", "AXP",
     "LIN", "GS", "ISRG", "MRK", "TMO", "NOW", "BX", "ADBE", "DIS", "PEP",
-    "BRK.A",
     "QCOM", "T", "AMD", "VZ", "CAT", "UBER", "BKNG", "TXN", "SPGI", "INTU",
     "RTX", "C", "AMGN", "BSX", "PGR", "BLK", "UNP", "DHR", "SCHW", "SYK",
     "PFE", "LOW", "NEE", "TJX", "BA", "AMAT", "ANET", "CMCSA", "HON", "PANW",
@@ -60,7 +59,7 @@ SP500_TICKERS = [
     "AES", "BWA", "HII", "FMC"
 ]
 
-API_KEY = "VWZMI0HMRGA407QK"
+API_KEY = "Your API KEY"
 DATA_FOLDER = "data_list"  # Folder to store individual stock data
 LAST_FETCH_FILE = "last_fetch_date.json"
 DAILY_LIMIT = 25  # Maximum requests per day
