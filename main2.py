@@ -66,14 +66,6 @@ class EPSPrediction:
         self.regression()
         self.plot_data()
         self.printvalue()
-    
-    def MSE(self):
-        self.Y_true = 0  # Original Value
-        for i in range(len(self.eps)):
-            loss = (self.eps[i] - self.predicted_eps[i]) ** 2
-            self.Y_true += loss
-        self.MSE = self.Y_true / len(self.eps)
-        return self.MSE
 
 # Example usage
 file_name = "./data_list/AAPL.json"
@@ -81,4 +73,3 @@ degree = 4
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
-print("MSE: ", eps_prediction.MSE())
