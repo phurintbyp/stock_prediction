@@ -67,6 +67,22 @@ class EPSPrediction:
         self.plot_data()
         self.printvalue()
 
+    def MSE(self):
+        self.loss_sum = 0
+        for i in range(len(self.eps)):
+            self.loss_sum += (self.eps[i] - self.predicted_eps[i])**2
+        return self.loss_sum / len(self.eps)
+    
+    def RSQ(self):
+        self.SSR = 0
+        self.SST = 0
+        self.eps_mean = np.mean(self.eps)
+        for i in range(len(self.eps)):
+            self.SSR += (self.eps[i] - self.predicted_eps[i])**2
+        for i in range(len(self.eps)):
+            self.SST += (self.eps[i] - self.eps_mean)**2
+        return 1 - self.SSR / self.SST
+    
 # Example usage
 file_name = "./data_list/AAPL.json"
 degree = 4
