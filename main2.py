@@ -54,7 +54,7 @@ class EPSPrediction:
         growth_percent = growth * 100  # Convert to percentage for formula
         
         # Revised intrinsic value formula with 4.4 adjustment
-        intrinsic_value = current_eps * (7 + 1 * growth_percent) * (4.4/bond_yield)
+        intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
         
         print("Intrinsic Value using Benjamin Graham's Formula:", intrinsic_value)
         print("Current EPS:", current_eps)
@@ -84,10 +84,11 @@ class EPSPrediction:
         return 1 - self.SSR / self.SST
     
 # Example usage
-file_name = "./data_list/AAPL.json"
+file_name = "./revenue/AAPL.json"
 degree = 4
-bond_yield = 4.8
+bond_yield = 4.2
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
 print("Mean Squared Error:", eps_prediction.MSE())
 print("R-Squared:", eps_prediction.RSQ())
+
