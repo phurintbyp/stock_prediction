@@ -89,3 +89,5 @@ degree = 4
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
+print("Mean Squared Error:", eps_prediction.MSE())
+print("R-Squared:", eps_prediction.RSQ())
