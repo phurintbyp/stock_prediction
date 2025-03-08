@@ -60,7 +60,7 @@ SP500_TICKERS = [
 ]
 
 API_KEY = "VWZMI0HMRGA407QK"
-DATA_FOLDER = "data_list"  # Folder to store individual stock data
+DATA_FOLDER = "./data/data_list"  # Folder to store individual stock data
 LAST_FETCH_FILE = "last_fetch_date.json"
 DAILY_LIMIT = 25  # Maximum requests per day
 MAX_RETRIES = 3  # Number of retries for failed requests

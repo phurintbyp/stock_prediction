@@ -1,2 +1,1 @@
-
-shares_outstanding = 12210
+Calculate DCF by predicting fcf (constant growth rate)

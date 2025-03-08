@@ -7,7 +7,7 @@ import time
 # Configuration
 API_KEY = "VWZMI0HMRGA407QK"  # Replace with your Alpha Vantage API Key
 STOCK_SYMBOL = "GOOGL"  # Replace with your desired stock symbol
-DATA_FOLDER = "revenue"  # Folder to store revenue data
+DATA_FOLDER = "./data/revenue"  # Folder to store revenue data
 MAX_RETRIES = 3  # Number of retries for failed requests
 SLEEP_TIME = 12  # Sleep time between API requests (to avoid rate limits)
 

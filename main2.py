@@ -84,7 +84,7 @@ class EPSPrediction:
         return 1 - self.SSR / self.SST
     
 # Example usage
-file_name = "./revenue/GOOGL.json"
+file_name = "./data/revenue/GOOGL.json"
 degree = 1
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
