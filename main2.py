@@ -12,6 +12,7 @@ class EPSPrediction:
         self.extended_years = None
         self.predicted_eps = None
         self.bond_yield = bond_yield
+        self.Y_true = 0
 
     def load_data(self):
         with open(self.file_name, 'r') as file:
@@ -53,7 +54,7 @@ class EPSPrediction:
         growth_percent = growth * 100  # Convert to percentage for formula
         
         # Revised intrinsic value formula with 4.4 adjustment
-        intrinsic_value = current_eps * (7 + 1 * growth_percent) * (4.4/bond_yield)
+        intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
         
         print("Intrinsic Value using Benjamin Graham's Formula:", intrinsic_value)
         print("Current EPS:", current_eps)
@@ -66,9 +67,28 @@ class EPSPrediction:
         self.plot_data()
         self.printvalue()
 
+    def MSE(self):
+        self.loss_sum = 0
+        for i in range(len(self.eps)):
+            self.loss_sum += (self.eps[i] - self.predicted_eps[i])**2
+        return self.loss_sum / len(self.eps)
+    
+    def RSQ(self):
+        self.SSR = 0
+        self.SST = 0
+        self.eps_mean = np.mean(self.eps)
+        for i in range(len(self.eps)):
+            self.SSR += (self.eps[i] - self.predicted_eps[i])**2
+        for i in range(len(self.eps)):
+            self.SST += (self.eps[i] - self.eps_mean)**2
+        return 1 - self.SSR / self.SST
+    
 # Example usage
-file_name = "./data_list/NFLX.json"
-degree = 4
+file_name = "./revenue/GOOGL.json"
+degree = 1
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
+print("Mean Squared Error:", eps_prediction.MSE())
+print("R-Squared:", eps_prediction.RSQ())
+
