@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 20 23:37:03 2024
-
-@author: MMH_user
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,9 +9,6 @@ Y_t = np.sin(X_t) + 0.1*np.random.randn(len(X_t), 1)
 
 plt.plot(X_t, Y_t)
 plt.show()
-
-###############################################################################
-#X(t) --> Y(t)
 
 from MyRNN import *
 
@@ -31,9 +23,6 @@ plt.plot(X_t, Y_t)
 plt.plot(X_new, Y_hat)
 plt.legend(['y', '$\hat{y}$'])
 plt.show()
-    
-###############################################################################
-#Y(t) --> Y(t + dt)
 
 from MyRNN import *
 

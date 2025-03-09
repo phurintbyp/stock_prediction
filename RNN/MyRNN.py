@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  8 02:24:29 2024
-
-@author: MMH_user
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -68,7 +62,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch = 500, n_neurons = 400,
 
             print(f'current MSSE = {L:.3f}')
 
-########one final plot#########################################################
+
     rnn.forward(X_t)
     
     if dt != 0:
@@ -96,9 +90,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch = 500, n_neurons = 400,
     print(f'Done! MSSE = {L:.3f}')
     
     return(rnn)
-###############################################################################
-#
-###############################################################################
+
 def ApplyMyRNN(X_t, rnn):
     
     T     = max(X_t.shape)
@@ -112,10 +104,6 @@ def ApplyMyRNN(X_t, rnn):
     [_,_,Y_hat] = rnn.RNNCell(X_t, ht, rnn.ACT, H, Y_hat)
 
     return(Y_hat)
-
-###############################################################################
-#
-###############################################################################
 
 class RNN():
     
@@ -222,9 +210,6 @@ class RNN():
         
         self.H       = H
 
-###############################################################################
-#
-###############################################################################
 class Tanh:
         
     def forward(self, inputs):
@@ -234,9 +219,7 @@ class Tanh:
     def backward(self, dvalues):
         deriv        = 1 - self.output**2
         self.dinputs = np.multiply(deriv, dvalues)
-###############################################################################
-#
-###############################################################################
+
 class Optimizer_SGD:
     #initializing with a default learning rate of 0.1
     def __init__(self, learning_rate = 1e-5, decay = 0, momentum = 0):
