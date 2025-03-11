@@ -62,23 +62,23 @@ Y_new_scaled = ApplyMyRNN(X_new, rnn)
 Y_new = (Y_new_scaled * std_y) + mean_y
 
 # 10) Plot historical vs. predicted
-plt.figure(figsize=(10, 6))
-plt.plot(X_t, Y_t, 'b-', label='Historical Data')
-plt.plot(X_new, Y_new, 'r--', label='10-Year Prediction')
-plt.title("Value Prediction (Scaled RNN)")
-plt.xlabel("Time Index")
-plt.ylabel("Value")
-plt.legend()
+# plt.figure(figsize=(10, 6))
+# plt.plot(X_t, Y_t, 'b-', label='Historical Data')
+# plt.plot(X_new, Y_new, 'r--', label='10-Year Prediction')
+# plt.title("Value Prediction (Scaled RNN)")
+# plt.xlabel("Time Index")
+# plt.ylabel("Value")
+# plt.legend()
 
-# Add vertical line to show where prediction starts
-pred_start = len(X_t) - 1
-plt.axvline(x=pred_start, color='k', linestyle=':', alpha=0.5)
-plt.text(pred_start + 0.5, np.min(Y_t),
-         'Prediction Start', rotation=90)
+# # Add vertical line to show where prediction starts
+# pred_start = len(X_t) - 1
+# plt.axvline(x=pred_start, color='k', linestyle=':', alpha=0.5)
+# plt.text(pred_start + 0.5, np.min(Y_t),
+#          'Prediction Start', rotation=90)
 
-fig = plt.gcf()
-fig.canvas.mpl_connect('key_press_event', close_on_key)
-plt.show()
+# fig = plt.gcf()
+# fig.canvas.mpl_connect('key_press_event', close_on_key)
+# plt.show()
 
 # 11) Print out the future predictions
 final_historical_year = 2024
