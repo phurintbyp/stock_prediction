@@ -32,7 +32,7 @@ Y_t_scaled = (Y_t - mean_y) / std_y
 
 # 5) Visualize original (unscaled) data
 plt.plot(X_t, Y_t, label="Original Data")
-plt.title("AAPL Historical Data (Unscaled)")
+plt.title("Historical Data")
 plt.xlabel("Time Index")
 plt.ylabel("Value")
 plt.legend()
@@ -65,8 +65,8 @@ Y_new = (Y_new_scaled * std_y) + mean_y
 plt.figure(figsize=(10, 6))
 plt.plot(X_t, Y_t, 'b-', label='Historical Data')
 plt.plot(X_new, Y_new, 'r--', label='10-Year Prediction')
-plt.title("AAPL Value Prediction (Scaled RNN)")
-plt.xlabel("Time Index (Years since 1996)")
+plt.title("Value Prediction (Scaled RNN)")
+plt.xlabel("Time Index")
 plt.ylabel("Value")
 plt.legend()
 
