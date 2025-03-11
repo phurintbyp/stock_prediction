@@ -8,7 +8,7 @@ def close_on_key(event):
         plt.close(event.canvas.figure)
 
 def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
-             learning_rate=1e-5, decay=0.015, momentum=0.5,
+             learning_rate=1e-5, decay=0.0, momentum=0.8,
              plot_each=50, dt=0):
     
     # initializing RNN
