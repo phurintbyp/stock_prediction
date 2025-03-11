@@ -52,6 +52,8 @@ class EPSPrediction:
         eps_10_years = self.predicted_eps[index][0]
         growth = (eps_10_years / current_eps) ** (1/10) - 1
         growth_percent = growth * 100  # Convert to percentage for formula
+
+        print(growth_percent)
         
         # Revised intrinsic value formula with 4.4 adjustment
         intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
@@ -84,8 +86,8 @@ class EPSPrediction:
         return 1 - self.SSR / self.SST
     
 # Example usage
-file_name = "./data/revenue/GOOGL.json"
-degree = 1
+file_name = "./data/data_list/USB.json"
+degree = 2
 bond_yield = 4.8
 eps_prediction = EPSPrediction(file_name, degree, bond_yield)
 eps_prediction.run()
