@@ -13,6 +13,8 @@ class EPSPrediction:
         self.predicted_eps = None
         self.bond_yield = bond_yield
         self.Y_true = 0
+        self.intrinsic_value = None
+        self.mse = None
 
     def load_data(self):
         with open(self.file_name, 'r') as file:
@@ -56,18 +58,22 @@ class EPSPrediction:
         print(growth_percent)
         
         # Revised intrinsic value formula with 4.4 adjustment
-        intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/self.bond_yield)
+        self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/self.bond_yield)
+        self.mse = self.MSE()
         
-        print("Intrinsic Value using Benjamin Graham's Formula:", intrinsic_value)
+        print("Intrinsic Value using Benjamin Graham's Formula:", self.intrinsic_value)
         print("Current EPS:", current_eps)
         print("Future EPS 10 years from now:", eps_10_years)
         print("Predicted Growth Rate (%):", growth_percent)
+        print("Mean Squared Error:", self.mse)
+        print("R-Squared:", self.RSQ())
 
     def run(self):
         self.load_data()
         self.regression()
         self.plot_data()
         self.printvalue()
+        
 
     def MSE(self):
         self.loss_sum = 0

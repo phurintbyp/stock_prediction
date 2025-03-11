@@ -9,7 +9,7 @@ def close_on_key(event):
 
 def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
              learning_rate=1e-5, decay=0.0, momentum=0.8,
-             plot_each=50, dt=0):
+             plot_each=50, dt=0, auto_skip=False):
     
     # initializing RNN
     rnn = RNN(n_neurons, Activation)
@@ -72,7 +72,11 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
             
             fig = plt.gcf()
             fig.canvas.mpl_connect('key_press_event', close_on_key)
-            plt.show()
+            plt.show(block=not auto_skip)
+            
+            if auto_skip:
+                plt.pause(1)
+                plt.close()
             
             print(f'epoch={n}, partial MSSE={L_partial[0,0]:.3f}, full-series MSSE={L_full[0,0]:.3f}')
     
@@ -106,7 +110,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
     
     print(f'Done! MSSE (full-series) = {L_final[0,0]:.3f}')
     
-    return rnn
+    return (rnn, L_full[0,0])
 
 def ApplyMyRNN(X_t, rnn):
     T = max(X_t.shape)

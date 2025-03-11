@@ -14,6 +14,8 @@ class LSTM_test:
         self.decay = decay
         self.learning_rate = learning_rate
         self.auto_skip = auto_skip
+        self.intrinsic_value = None
+        self.mse = None
 
     def run(self):
         with open(self.file_name, 'r') as f:
@@ -27,7 +29,7 @@ class LSTM_test:
         plt.title('Earnings Per Share')
         plt.show()
 
-        [lstm, dense1, dense2] = RunMyLSTM(Y_t, Y_t, n_neurons=self.n_neurons,
+        [lstm, dense1, dense2, self.mse] = RunMyLSTM(Y_t, Y_t, n_neurons=self.n_neurons,
                                         n_epoch=self.n_epoch, plot_each=self.plot_each, dt=self.dt,
                                         momentum=self.momentum, decay=self.decay,
                                         learning_rate=self.learning_rate,
@@ -48,8 +50,4 @@ class LSTM_test:
         current_eps = Y_t[-1][0]
         bond_yield = 4.8
 
-        print(current_eps)
-        print(growth_percent)
-
-        intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
-        print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", intrinsic_value)
+        self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)

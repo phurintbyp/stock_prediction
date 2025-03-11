@@ -4,11 +4,6 @@ import random
 import time
 from datetime import datetime
 
-def r2_score(y_true, y_pred):
-    ss_res = np.sum(np.square(y_true - y_pred))
-    ss_tot = np.sum(np.square(y_true - np.mean(y_true)))
-    return 1 - (ss_res / ss_tot)
-
 def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
              learning_rate = 1e-5, decay = 0, momentum = 0.95, plot_each = 50,\
              dt = 0, auto_skip = False):
@@ -21,13 +16,10 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     optimizerLSTM = Optimizer_SGD_LSTM(learning_rate, decay, momentum)
     optimizer     = Optimizer_SGD(learning_rate, decay, momentum)
     
-    #Monitor   = np.zeros((n_epoch,1))
     X_plot    = np.arange(0,T)
     
     # Add loss tracking
     loss_history = []
-    rmse_history = []
-    r2_history = []
     
     if dt != 0:
         X_plots = np.arange(0,T + dt)
@@ -106,17 +98,12 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             else:
                 dY    = Y_hat - Y_t
                 
-            # Correct MSE calculation
             L = np.mean(np.square(dY))
-            rmse = np.sqrt(L)  # RMSE
-            r2 = r2_score(Y_t, Y_hat)  # R-squared
             
-            print(f"Epoch #{n} MSE: {L:.6f}, RMSE: {rmse:.6f}, R2: {r2:.6f}")
+            print(f"Epoch #{n} MSE: {L:.6f}")
 
             # Store metrics in history
             loss_history.append(L)
-            rmse_history.append(rmse)
-            r2_history.append(r2)
             
             # Create loss plot
             plt.figure(figsize=(12, 4))
@@ -125,8 +112,7 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             m = np.min(np.vstack((Y_hat,Y_t)))
             plt.plot(X_plot, Y_t)
             plt.plot(X_plots, Y_hat)
-            plt.plot(X_plots[leftidx:rightidx], Y_hat_chunk)
-            plt.legend(['y', '$\hat{y}$', 'current $\hat{y}$ chunk'])
+            plt.legend(['y', '$\hat{y}$'])
             plt.title('epoch ' + str(n))
             if dt != 0:
                 plt.fill_between([X_plot[-1], X_plots[-1]],\
@@ -137,8 +123,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             plt.subplot(1, 2, 2)
             epochs = np.arange(0, len(loss_history)) * plot_each
             plt.plot(epochs, loss_history, 'b-', label='MSE')
-            plt.plot(epochs, rmse_history, 'r-', label='RMSE')
-            plt.plot(epochs, r2_history, 'g-', label='R²')
             plt.xlabel('Epoch')
             plt.ylabel('Metric Value')
             plt.title('Training Metrics History')
@@ -156,7 +140,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
         optimizerLSTM.pre_update_params()
         optimizer.pre_update_params()
         
-####finally, one last plot of the complete data################################
     lstm.forward(X_t)
     
     H = np.array(lstm.H)
@@ -175,8 +158,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
                 
     # Correct final MSE calculation
     L = np.mean(np.square(dY))
-    final_rmse = np.sqrt(L)
-    final_r2 = r2_score(Y_t, Y_hat)
     
     # Final plot with loss
     plt.figure(figsize=(12, 4))
@@ -200,7 +181,7 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     plt.tight_layout()
     plt.show(block=True)  # Always block for the final plot
     
-    with open('e:/stock_prediction/lstm/training_metrics.txt', 'a') as f:  # Changed 'w' to 'a'
+    with open('./lstm/training_metrics.txt', 'a') as f:  # Changed 'w' to 'a'
         f.write(f"\n\nTraining Run - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("-" * 50 + "\n")
         f.write(f"Epochs: {n_epoch}\n")
@@ -209,13 +190,11 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
         f.write(f"Decay: {decay}\n")
         f.write(f"Momentum: {momentum}\n")
         f.write(f"MSE:  {L:.6f}\n")
-        f.write(f"RMSE: {final_rmse:.6f}\n")
-        f.write(f"R2:   {final_r2:.6f}\n")
         f.write("-" * 50 + "\n")
     
-    print(f'Done! MSE = {L:.6f}, RMSE = {final_rmse:.6f}, R² = {final_r2:.6f}')
+    print(f'Done! MSE = {L:.6f}')
     
-    return(lstm, dense1, dense2)
+    return(lstm, dense1, dense2, L)
 
 ###############################################################################
 #

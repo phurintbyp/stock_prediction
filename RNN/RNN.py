@@ -4,9 +4,9 @@ import json
 from RNN.MyRNN import *
 
 
-class RNN:
+class RNN_test:
     
-    def __init__(self, file_name, n_epoch, n_neurons, learning_rate, decay, momentum, dt):
+    def __init__(self, file_name, n_epoch, n_neurons, learning_rate, decay, momentum, dt, auto_skip):
         self.file_name = file_name
         self.n_epoch = n_epoch
         self.n_neurons = n_neurons
@@ -14,14 +14,12 @@ class RNN:
         self.decay = decay
         self.momentum = momentum
         self.dt = dt
+        self.auto_skip = auto_skip
+        self.intrinsic_value = None
+        self.mse = None
 
     def run(self):
         np.random.seed(31)
-
-        # def close_on_key(event):
-        #     """Close the figure if the '0' key is pressed."""
-        #     if event.key == '0':
-        #         plt.close(event.canvas.figure)
 
         # 1) Load data
         with open(self.file_name, 'r') as f:
@@ -52,7 +50,7 @@ class RNN:
         plt.show()
 
         # 6) Train RNN on the SCALED Y data
-        rnn = RunMyRNN(
+        [rnn, self.mse] = RunMyRNN(
             X_t,
             Y_t_scaled,          # <--- use scaled target here
             Activation=Tanh(),
@@ -61,7 +59,8 @@ class RNN:
             learning_rate=self.learning_rate,  # higher LR to avoid slow/stuck training
             decay=self.decay,          # tiny weight decay
             momentum=self.momentum,        
-            dt=self.dt
+            dt=self.dt,
+            auto_skip=self.auto_skip
         )
 
         # 7) Predict next 10 steps using the trained model
@@ -126,3 +125,11 @@ class RNN:
         plt.ylabel("Value")
         plt.legend()
         plt.show()
+
+        print(f"{Y_t[-1][0]}///{Y_new[-1][0].flatten()}")
+        growth_percent = ((Y_new[-1][0] / Y_t[-1][0]) ** (1 / future_steps) - 1) * 100
+        bond_yield = 4.8
+        current_eps = Y_t[-1][0]
+
+        self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
+        print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", self.intrinsic_value)
