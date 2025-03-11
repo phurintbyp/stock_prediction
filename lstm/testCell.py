@@ -1,56 +1,55 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  8 03:02:45 2024
-
-@author: MMH_user
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+from lstm.LSTM_cell import *
 
-# Load AAPL data
-with open('./data/data_list/USB.json', 'r') as f:
-    data = json.load(f)
+class LSTM_test:
+    def __init__(self, file_name, n_neurons, n_epoch, plot_each, dt, momentum, decay, learning_rate, auto_skip):
+        self.file_name = file_name
+        self.n_neurons = n_neurons
+        self.n_epoch = n_epoch
+        self.plot_each = plot_each
+        self.dt = dt
+        self.momentum = momentum
+        self.decay = decay
+        self.learning_rate = learning_rate
+        self.auto_skip = auto_skip
 
-# Convert to numpy array
-Y_t = np.array(list(data.values()))[::-1]  # Reverse to get chronological order
-Y_t = Y_t.reshape(len(Y_t), 1)
+    def run(self):
+        with open(self.file_name, 'r') as f:
+            data = json.load(f)
 
-# Plot the original data
-plt.plot(Y_t)
-plt.title('Earnings Per Share')
-plt.show()
+        Y_t = np.array(list(data.values()))[::-1]
+        Y_t = Y_t.reshape(len(Y_t), 1)
 
-###############################################################################
-#forecast Y(t) --> Y(t + dt)
-from LSTM import *
+        # Plot the original data
+        plt.plot(Y_t)
+        plt.title('Earnings Per Share')
+        plt.show()
 
-dt = 10  # Predict next year
-[lstm, dense1, dense2] = RunMyLSTM(Y_t, Y_t, n_neurons=50,
-                                   n_epoch=1000, plot_each=50, dt=dt,
-                                   momentum=0.95, decay=0.001,
-                                   learning_rate=5e-4,
-                                   auto_skip=True)  # Add auto_skip parameter
+        [lstm, dense1, dense2] = RunMyLSTM(Y_t, Y_t, n_neurons=self.n_neurons,
+                                        n_epoch=self.n_epoch, plot_each=self.plot_each, dt=self.dt,
+                                        momentum=self.momentum, decay=self.decay,
+                                        learning_rate=self.learning_rate,
+                                        auto_skip=self.auto_skip)  # Add auto_skip parameter
 
-Y_hat = ApplyMyLSTM(Y_t, lstm, dense1, dense2)
-    
-X_plot = np.arange(0, len(Y_t))
-X_plot_hat = np.arange(0, len(Y_hat)) + dt
+        Y_hat = ApplyMyLSTM(Y_t, lstm, dense1, dense2)
+            
+        X_plot = np.arange(0, len(Y_t))
+        X_plot_hat = np.arange(0, len(Y_hat)) + self.dt
 
-plt.plot(X_plot, Y_t)
-plt.plot(X_plot_hat, Y_hat)
-plt.legend(['Actual EPS', 'Predicted EPS'])
-plt.title('Earnings Prediction')
-plt.show()
-###############################################################################
+        plt.plot(X_plot, Y_t)
+        plt.plot(X_plot_hat, Y_hat)
+        plt.legend(['Actual EPS', 'Predicted EPS'])
+        plt.title('Earnings Prediction')
+        plt.show()
 
-growth_percent = ((Y_hat[-1] / Y_t[-1]) ** (1/dt) - 1) * 100
-current_eps = Y_t[-1][0]
-bond_yield = 4.8
+        growth_percent = ((Y_hat[-1] / Y_t[-1]) ** (1/self.dt) - 1) * 100
+        current_eps = Y_t[-1][0]
+        bond_yield = 4.8
 
-print(current_eps)
-print(growth_percent)
+        print(current_eps)
+        print(growth_percent)
 
-intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
-print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", intrinsic_value)
+        intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
+        print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", intrinsic_value)
