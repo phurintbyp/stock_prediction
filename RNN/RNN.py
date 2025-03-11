@@ -86,3 +86,30 @@ prediction_years = [final_historical_year + i + 1 for i in range(future_steps)]
 print("Predicted values for future years:")
 for year, value in zip(prediction_years, Y_new.flatten()):
     print(f"{year}: {value:.2f}")
+
+# Invert scaling for the historical predictions (stored in rnn.Y_hat) to get back to the original scale.
+Y_hat_hist = (rnn.Y_hat * std_y) + mean_y  # model’s prediction on historical data
+
+# Y_new has been inverted already (or invert it similarly if needed)
+# Y_new = (Y_new_scaled * std_y) + mean_y   # if not already inverted
+
+# Concatenate the historical predictions with future predictions
+Y_hat_full = np.concatenate([Y_hat_hist, Y_new])
+
+# Create a full x-axis that spans the historical period and the future predictions
+X_full = np.arange(0, len(X_t) + future_steps).reshape(-1, 1)
+
+plt.figure(figsize=(12, 6))
+# Plot the model's prediction over the full period (historical + future)
+plt.plot(X_full, Y_hat_full, 'r-', linewidth=2, label='Model Prediction')
+# Plot the actual historical data (only for the historical period)
+plt.plot(X_t, Y_t, 'b-', linewidth=2, label='Historical Data')
+
+# Mark the transition from historical to predicted future data
+plt.axvline(x=len(X_t) - 1, color='k', linestyle='--', label='Prediction Start')
+
+plt.title("Historical Data vs. Full Model Prediction")
+plt.xlabel("Time Index")
+plt.ylabel("Value")
+plt.legend()
+plt.show()
