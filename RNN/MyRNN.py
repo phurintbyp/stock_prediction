@@ -9,7 +9,7 @@ def close_on_key(event):
 
 def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
              learning_rate=1e-5, decay=0.0, momentum=0.8,
-             plot_each=50, dt=0, auto_skip=False):
+             plot_each=100, dt=0, auto_skip=False):
     
     # initializing RNN
     rnn = RNN(n_neurons, Activation)

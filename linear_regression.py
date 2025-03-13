@@ -54,7 +54,7 @@ class EPSPrediction:
         eps_10_years = self.predicted_eps[index][0]
         growth = (eps_10_years / current_eps) ** (1/10) - 1
         growth_percent = growth * 100  # Convert to percentage for formula
-
+        self.growth_percent = growth_percent
         print(growth_percent)
         
         # Revised intrinsic value formula with 4.4 adjustment
@@ -79,7 +79,8 @@ class EPSPrediction:
         self.loss_sum = 0
         for i in range(len(self.eps)):
             self.loss_sum += (self.eps[i] - self.predicted_eps[i])**2
-        return self.loss_sum / len(self.eps)
+        self.mse = float(self.loss_sum / len(self.eps))  # Convert to float
+        return self.mse
     
     def RSQ(self):
         self.SSR = 0

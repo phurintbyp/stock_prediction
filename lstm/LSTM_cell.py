@@ -11,8 +11,8 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     #initializing LSTM
     lstm          = LSTM(n_neurons)
     T             = max(X_t.shape)
-    dense1        = Layer_Dense(n_neurons, T)
-    dense2        = Layer_Dense(T, 1)
+    dense1        = Layer_Dense(n_neurons, n_neurons)  # Changed: First dense layer n_neurons -> n_neurons
+    dense2        = Layer_Dense(n_neurons, 1)         # Changed: Second dense layer n_neurons -> 1
     optimizerLSTM = Optimizer_SGD_LSTM(learning_rate, decay, momentum)
     optimizer     = Optimizer_SGD(learning_rate, decay, momentum)
     
@@ -194,52 +194,78 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     
     print(f'Done! MSE = {L:.6f}')
     
-    return(lstm, dense1, dense2, L)
+    return(lstm, dense1, dense2, L, Y_hat)
 
 ###############################################################################
 #
 ###############################################################################
     
 def ApplyMyLSTM(X_t, lstm, dense1, dense2):
-    
-    T       = max(X_t.shape)
-    H       = lstm.H
-    ht      = H[0]
-    H       = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
-    C       = lstm.C
-    ct      = C[0]
-    C       = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
-    C_tilde = [np.zeros((lstm.n_neurons,1)) for t in range(T)]
-    F       = [np.zeros((lstm.n_neurons,1)) for t in range(T)]
-    O       = [np.zeros((lstm.n_neurons,1)) for t in range(T)]
-    I       = [np.zeros((lstm.n_neurons,1)) for t in range(T)]
-    
-    Sigmf    = [Sigmoid() for i in range(T)]
-    Sigmi    = [Sigmoid() for i in range(T)]
-    Sigmo    = [Sigmoid() for i in range(T)]
-    
-    Tanh1    = [Tanh() for i in range(T)]
-    Tanh2    = [Tanh() for i in range(T)]
+    T = max(X_t.shape)
+    # Initialize hidden and cell states
+    lstm.H = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
+    lstm.C = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
 
-    [H, _, _, _, _, _, _, _, _, _, _] = lstm.LSTMCell(X_t, ht, ct,\
-                                        Sigmf, Sigmi, Sigmo,\
-                                        Tanh1, Tanh2,\
-                                        H, C, F, O, I, C_tilde)
-            
+    # Forward pass through LSTM
+    lstm.forward(X_t)
     
-    H = np.array(H)
-    H = H.reshape((H.shape[0],H.shape[1]))
+    # Process hidden states to predictions
+    H = np.array(lstm.H)
+    H = H.reshape((H.shape[0], H.shape[1]))
     
-    #states to Y_hat
-    dense1.forward(H[0:-1])
+    # Only use relevant hidden states for prediction (matching input length)
+    dense1.forward(H[1:T+1])  # Changed from H[0:-1]
     dense2.forward(dense1.output)
     
     Y_hat = dense2.output
-    #plt.plot(X_t, Y_hat)
-    #plt.legend(['$\hat{y}$'])
-    #plt.show()
     
-    return(Y_hat)
+    return Y_hat
+
+####################################
+
+    # """Generate predictions for both historical data and future steps"""
+    # # Get historical predictions first
+    # lstm.forward(X_t)
+    # H = np.array(lstm.H)
+    
+    # # Process historical predictions
+    # historical_preds = []
+    # for t in range(1, H.shape[0]):
+    #     h_t = H[t]  # Current hidden state
+    #     # Forward through dense layers
+    #     dense1.forward(h_t.T)  # Shape should be (1, n_neurons)
+    #     dense2.forward(dense1.output)
+    #     historical_preds.append(dense2.output[0][0])
+    
+    # historical_preds = np.array(historical_preds).reshape(-1, 1)
+
+    # # Generate future predictions if requested
+    # if forecast_steps > 0:
+    #     future_preds = []
+    #     current_h = H[-1]  # Last hidden state
+    #     last_input = X_t[-1].reshape(1, 1)
+
+    #     for _ in range(forecast_steps):
+    #         # Forward through LSTM
+    #         lstm.forward(last_input)
+    #         current_h = lstm.H[1]
+            
+    #         # Forward through dense layers
+    #         dense1.forward(current_h.T)
+    #         dense2.forward(dense1.output)
+    #         next_pred = dense2.output[0][0]
+            
+    #         future_preds.append(next_pred)
+    #         last_input = np.array([[next_pred]])
+
+    #     future_preds = np.array(future_preds).reshape(-1, 1)
+    #     print(future_preds)
+    #     return np.vstack([historical_preds, future_preds])
+
+    # return historical_preds
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 
 ###############################################################################
 #

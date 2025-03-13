@@ -50,7 +50,7 @@ class RNN_test:
         plt.show()
 
         # 6) Train RNN on the SCALED Y data
-        [rnn, self.mse] = RunMyRNN(
+        [rnn, mse] = RunMyRNN(
             X_t,
             Y_t_scaled,          # <--- use scaled target here
             Activation=Tanh(),
@@ -62,6 +62,7 @@ class RNN_test:
             dt=self.dt,
             auto_skip=self.auto_skip
         )
+        self.mse = float(mse)  # Convert MSE to float
 
         # 7) Predict next 10 steps using the trained model
         future_steps = 10
@@ -72,6 +73,7 @@ class RNN_test:
 
         # 9) Invert the scaling for final predictions: Y_new = Y_scaled * std_y + mean_y
         Y_new = (Y_new_scaled * std_y) + mean_y
+        print(f"Predictions: {Y_new}")
 
         # 10) Plot historical vs. predicted
         # plt.figure(figsize=(10, 6))
@@ -110,6 +112,8 @@ class RNN_test:
 
         # Create a full x-axis that spans the historical period and the future predictions
         X_full = np.arange(0, len(X_t) + future_steps).reshape(-1, 1)
+        self.X_full = X_full
+        self.Y_hat_full = Y_hat_full
 
         plt.figure(figsize=(12, 6))
         # Plot the model's prediction over the full period (historical + future)
@@ -126,10 +130,9 @@ class RNN_test:
         plt.legend()
         plt.show()
 
-        print(f"{Y_t[-1][0]}///{Y_new[-1][0].flatten()}")
-        growth_percent = ((Y_new[-1][0] / Y_t[-1][0]) ** (1 / future_steps) - 1) * 100
+        growth_percent = ((Y_new[-1][0] / Y_t[-1][0]) ** (1 / 10) - 1) * 100
         bond_yield = 4.8
         current_eps = Y_t[-1][0]
-
+        self.growth_percent = growth_percent
         self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
         print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", self.intrinsic_value)
