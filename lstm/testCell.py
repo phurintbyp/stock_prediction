@@ -48,6 +48,7 @@ class LSTM_test:
         plt.axvline(x=len(Y_t)-1, color='k', linestyle='--', label='Prediction Start')
         plt.legend(['y', '$\hat{y}$'])
         plt.show()
+    
 
         # Calculate metrics
         try:
