@@ -4,7 +4,7 @@ import json
 from lstm.LSTM_cell import *
 
 class LSTM_test:
-    def __init__(self, file_name, n_neurons, n_epoch, plot_each, dt, momentum, decay, learning_rate, auto_skip):
+    def __init__(self, file_name, n_neurons, n_epoch, plot_each, dt, momentum, decay, learning_rate, auto_skip, price):
         self.file_name = file_name
         self.n_neurons = n_neurons
         self.n_epoch = n_epoch
@@ -14,6 +14,7 @@ class LSTM_test:
         self.decay = decay
         self.learning_rate = learning_rate
         self.auto_skip = auto_skip
+        self.price = price
         self.intrinsic_value = None
         self.mse = None
         self.scaler_mean = None
@@ -57,6 +58,10 @@ class LSTM_test:
         X_plot     = np.arange(0,len(Y_t))
         X_plot_hat = np.arange(0,len(Y_hat)) + self.dt
 
+        self.X_plot_hat = X_plot_hat
+        self.Y_hat = Y_hat
+        Y_hat_last = Y_hat[-1][0]
+
         plt.figure(figsize=(12, 6))
         plt.plot(X_plot, Y_t, 'b-', linewidth=2, label='Historical Data')
         plt.plot(X_plot_hat, Y_hat, 'g-', linewidth=2, label='LSTM Prediction')
@@ -67,12 +72,15 @@ class LSTM_test:
 
         # Calculate metrics
         try:
-            # Calculate growth rate using the ratio of last predicted value to last actual value
-            # Using Y_hat[1:] since Y_hat includes one extra prediction point
-            self.growth_percent = float(((Y_hat[-1] / Y_t[-1]) ** (1/self.dt) - 1) * 100)
-            current_eps = float(Y_t[-1])  # Use the last actual value
-            bond_yield = 4.8
-            self.intrinsic_value = float(current_eps * (7.5 + 1 * self.growth_percent) * (4.4/bond_yield))
+            if self.price is True:  # Added missing colon
+                self.growth_percent = 0.0
+                self.intrinsic_value = float(Y_hat_last)
+            else:
+                # Calculate growth rate using the ratio of last predicted value to last actual value
+                self.growth_percent = float(((Y_hat[-1] / Y_t[-1]) ** (1/self.dt) - 1) * 100)
+                current_eps = float(Y_t[-1])  # Use the last actual value
+                bond_yield = 4.8
+                self.intrinsic_value = float(current_eps * (7.5 + 1 * self.growth_percent) * (4.4/bond_yield))
         except Exception as e:
             print(f"Error calculating metrics: {e}")
             self.growth_percent = 0.0

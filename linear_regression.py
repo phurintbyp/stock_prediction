@@ -4,7 +4,7 @@ import json
 from utils.linear_regression import Linear_regression
 
 class EPSPrediction:
-    def __init__(self, file_name, degree, bond_yield):
+    def __init__(self, file_name, degree, bond_yield, price, dt):
         self.file_name = file_name
         self.degree = degree
         self.year = None
@@ -15,6 +15,8 @@ class EPSPrediction:
         self.Y_true = 0
         self.intrinsic_value = None
         self.mse = None
+        self.price = "quarterly_prices" in file_name
+        self.dt = dt
 
     def load_data(self):
         with open(self.file_name, 'r') as file:
@@ -49,22 +51,31 @@ class EPSPrediction:
     
     def printvalue(self):
         current_eps = self.eps[-1]
-        desired_year = self.year[-1][0] + 10
+        desired_year = self.year[-1][0] + self.dt
         index = desired_year - 1  # Convert to 0-based index
-        eps_10_years = self.predicted_eps[index][0]
-        growth = (eps_10_years / current_eps) ** (1/10) - 1
-        growth_percent = growth * 100  # Convert to percentage for formula
-        self.growth_percent = growth_percent
-        print(growth_percent)
+        future_eps = self.predicted_eps[index][0]
         
-        # Revised intrinsic value formula with 4.4 adjustment
-        self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/self.bond_yield)
+        try:
+            if self.price:
+                self.growth_percent = 0.0
+                self.intrinsic_value = float(self.predicted_eps[index][0])
+            else:
+                growth = (future_eps / current_eps) ** (1/self.dt) - 1
+                growth_percent = growth * 100  # Convert to percentage for formula
+                self.growth_percent = growth_percent
+                # Revised intrinsic value formula with 4.4 adjustment
+                self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/self.bond_yield)
+        except Exception as e:
+            print(f"Error calculating metrics: {e}")
+            self.growth_percent = 0.0
+            self.intrinsic_value = 0.0
+            
         self.mse = self.MSE()
         
         print("Intrinsic Value using Benjamin Graham's Formula:", self.intrinsic_value)
         print("Current EPS:", current_eps)
-        print("Future EPS 10 years from now:", eps_10_years)
-        print("Predicted Growth Rate (%):", growth_percent)
+        print(f"Future EPS {self.dt} years from now:", future_eps)
+        print("Predicted Growth Rate (%):", self.growth_percent)
         print("Mean Squared Error:", self.mse)
         print("R-Squared:", self.RSQ())
 
@@ -97,7 +108,8 @@ if __name__ == "__main__":
     file_name = "./data/data_list/USB.json"
     degree = 2
     bond_yield = 4.8
-    eps_prediction = EPSPrediction(file_name, degree, bond_yield)
+    dt = 10
+    eps_prediction = EPSPrediction(file_name, degree, bond_yield, price=False, dt=dt)
     eps_prediction.run()
     print("Mean Squared Error:", eps_prediction.MSE())
     print("R-Squared:", eps_prediction.RSQ())
