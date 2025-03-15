@@ -5,14 +5,13 @@ from lstm.testCell import LSTM_test as LSTM
 from RNN.RNN import RNN_test
 import json
 
-file_name = "./data/data_list/AAPL.json"
+file_name = "./data/monthly_prices/AAPL.json"
 
 with open(file_name, 'r') as f:
     data = json.load(f)
 
 dates = np.array(list(data.keys()))[::-1]
 values = np.array(list(data.values()))[::-1]
-
 
 X_t = np.arange(len(dates)).reshape(len(dates), -1)
 Y_t = values.reshape(len(values), 1)
