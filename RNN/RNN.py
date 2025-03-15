@@ -34,9 +34,9 @@ class RNN_test:
         Y_t = values.reshape(len(values), 1)
 
         # 3) Standardize Y_t: Y_scaled = (Y - mean) / std
-        mean_y = np.mean(Y_t)
-        std_y = np.std(Y_t)
-        Y_t_scaled = (Y_t - mean_y) / std_y
+        # mean_y = np.mean(Y_t)
+        # std_y = np.std(Y_t)
+        # Y_t_scaled = (Y_t - mean_y) / std_y
 
         # 4) Quick check of scaled range (optional printout)
         # print("Scaled range:", Y_t_scaled.min(), Y_t_scaled.max())
@@ -52,7 +52,7 @@ class RNN_test:
         # 6) Train RNN on the SCALED Y data
         [rnn, mse] = RunMyRNN(
             X_t,
-            Y_t_scaled,          # <--- use scaled target here
+            Y_t,
             Activation=Tanh(),
             n_epoch=self.n_epoch,         # can increase more if needed
             n_neurons=self.n_neurons,        # fewer neurons for small dataset
@@ -64,75 +64,26 @@ class RNN_test:
         )
         self.mse = float(mse)  # Convert MSE to float
 
-        # 7) Predict next 10 steps using the trained model
-        future_steps = 10
-        X_new = np.arange(len(X_t), len(X_t) + future_steps).reshape(-1, 1)
+        Y_hat = ApplyMyRNN(Y_t, rnn)
 
-        # 8) Get scaled predictions
-        Y_new_scaled = ApplyMyRNN(X_new, rnn)
-
-        # 9) Invert the scaling for final predictions: Y_new = Y_scaled * std_y + mean_y
-        Y_new = (Y_new_scaled * std_y) + mean_y
-        print(f"Predictions: {Y_new}")
-
-        # 10) Plot historical vs. predicted
-        # plt.figure(figsize=(10, 6))
-        # plt.plot(X_t, Y_t, 'b-', label='Historical Data')
-        # plt.plot(X_new, Y_new, 'r--', label='10-Year Prediction')
-        # plt.title("Value Prediction (Scaled RNN)")
-        # plt.xlabel("Time Index")
-        # plt.ylabel("Value")
-        # plt.legend()
-
-        # # Add vertical line to show where prediction starts
-        # pred_start = len(X_t) - 1
-        # plt.axvline(x=pred_start, color='k', linestyle=':', alpha=0.5)
-        # plt.text(pred_start + 0.5, np.min(Y_t),
-        #          'Prediction Start', rotation=90)
-
-        # fig = plt.gcf()
-        # fig.canvas.mpl_connect('key_press_event', close_on_key)
-        # plt.show()
-
-        # 11) Print out the future predictions
-        final_historical_year = 2024
-        prediction_years = [final_historical_year + i + 1 for i in range(future_steps)]
-        print("Predicted values for future years:")
-        for year, value in zip(prediction_years, Y_new.flatten()):
-            print(f"{year}: {value:.2f}")
-
-        # Invert scaling for the historical predictions (stored in rnn.Y_hat) to get back to the original scale.
-        Y_hat_hist = (rnn.Y_hat * std_y) + mean_y  # model’s prediction on historical data
-
-        # Y_new has been inverted already (or invert it similarly if needed)
-        # Y_new = (Y_new_scaled * std_y) + mean_y   # if not already inverted
-
-        # Concatenate the historical predictions with future predictions
-        Y_hat_full = np.concatenate([Y_hat_hist, Y_new])
-
-        # Create a full x-axis that spans the historical period and the future predictions
-        X_full = np.arange(0, len(X_t) + future_steps).reshape(-1, 1)
-        self.X_full = X_full
-        self.Y_hat_full = Y_hat_full
+        X_t   = np.arange(len(Y_t))
 
         plt.figure(figsize=(12, 6))
-        # Plot the model's prediction over the full period (historical + future)
-        plt.plot(X_full, Y_hat_full, 'r-', linewidth=2, label='Model Prediction')
-        # Plot the actual historical data (only for the historical period)
         plt.plot(X_t, Y_t, 'b-', linewidth=2, label='Historical Data')
-
-        # Mark the transition from historical to predicted future data
-        plt.axvline(x=len(X_t) - 1, color='k', linestyle='--', label='Prediction Start')
-
-        plt.title("Historical Data vs. Full Model Prediction")
-        plt.xlabel("Time Index")
-        plt.ylabel("Value")
-        plt.legend()
+        plt.plot(X_t + self.dt, Y_hat, 'g-', linewidth=2, label='LSTM Prediction')
+        plt.axvline(x=len(Y_t)-1, color='k', linestyle='--', label='Prediction Start')
+        plt.legend(['y', '$\hat{y}$'])
         plt.show()
 
-        growth_percent = ((Y_new[-1][0] / Y_t[-1][0]) ** (1 / 10) - 1) * 100
+        # Calculate Metrics
+        Y_t_last = Y_t[-1][0]  # Get the last historical value
+        Y_hat_last = Y_hat[-1][0]  # Get the last predicted value
+        
+        # Calculate annual growth rate based on actual vs predicted
+        growth_percent = ((Y_hat_last / Y_t_last) ** (1 / self.dt) - 1) * 100
         bond_yield = 4.8
-        current_eps = Y_t[-1][0]
+        current_eps = Y_t_last
+        
         self.growth_percent = growth_percent
         self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
-        print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", self.intrinsic_value)
+        print("Intrinsic Value using Benjamin Graham's Formula(RNN):", self.intrinsic_value)

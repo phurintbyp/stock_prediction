@@ -28,14 +28,14 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=500, n_neurons=400,learning_rate=2e-5, decay=0, momentum=0.95, dt=0, auto_skip=True)
+rnn = RNN_test(file_name=file_name, n_epoch=700, n_neurons=100,learning_rate=1e-5, decay=0, momentum=0.95, dt=5, auto_skip=True)
 rnn.run()
 
 ###############################################
 # LSTM
 ###############################################
 
-lstm = LSTM(file_name=file_name, n_neurons=50, n_epoch=300, dt=0, plot_each=100, momentum=0.98, decay=1e-6, learning_rate=1e-4, auto_skip=True)
+lstm = LSTM(file_name=file_name, n_neurons=100, n_epoch=1000, dt=5, plot_each=100, momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True)
 lstm.run()
 
 ###############################################
