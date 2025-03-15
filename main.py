@@ -17,10 +17,10 @@ X_t = np.arange(len(dates)).reshape(len(dates), -1)
 Y_t = values.reshape(len(values), 1)
 
 is_price_data = "quarterly_prices" in file_name
-dt = 3
+dt = 12
 
 ###############################################
-# Linear Regression
+# Linear Regressionq
 ###############################################
 
 eps_prediction = EPSPrediction(file_name=file_name, degree=4, bond_yield=4.8, dt=dt, price=is_price_data)
@@ -30,7 +30,7 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=100, n_neurons=100, learning_rate=1e-5, 
+rnn = RNN_test(file_name=file_name, n_epoch=400, n_neurons=100, learning_rate=1e-5, 
                decay=0, momentum=0.95, dt=dt, auto_skip=True, price=is_price_data)
 rnn.run()
 
@@ -38,7 +38,7 @@ rnn.run()
 # LSTM
 ###############################################
 
-lstm = LSTM(file_name=file_name, n_neurons=100, n_epoch=100, dt=dt, plot_each=100, 
+lstm = LSTM(file_name=file_name, n_epoch=300, n_neurons=100, dt=dt, plot_each=100, 
             momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True, price=is_price_data)
 lstm.run()
 

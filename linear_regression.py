@@ -43,7 +43,7 @@ class EPSPrediction:
         plt.plot(self.extended_years, self.predicted_eps, marker="o", linestyle="-", linewidth=2, color="red", label="Predicted Growth")
         plt.xlabel("Year")
         plt.ylabel("Value")
-        plt.title("Growth Rate Data (Extended for 20 Years)")
+        plt.title("Growth Rate Data")
         plt.grid(True)
         plt.xticks(rotation=45)
         plt.legend()
@@ -77,7 +77,6 @@ class EPSPrediction:
         print(f"Future EPS {self.dt} years from now:", future_eps)
         print("Predicted Growth Rate (%):", self.growth_percent)
         print("Mean Squared Error:", self.mse)
-        print("R-Squared:", self.RSQ())
 
     def run(self):
         self.load_data()
@@ -85,23 +84,32 @@ class EPSPrediction:
         self.plot_data()
         self.printvalue()
         
-
     def MSE(self):
         self.loss_sum = 0
         for i in range(len(self.eps)):
-            self.loss_sum += (self.eps[i] - self.predicted_eps[i])**2
-        self.mse = float(self.loss_sum / len(self.eps))  # Convert to float
+            if self.price:
+                # For prices, use percentage error
+                actual = self.eps[i]
+                predicted = self.predicted_eps[i]
+                percent_error = (actual - predicted) / actual if actual != 0 else 0
+                self.loss_sum += percent_error ** 2
+            else:
+                # For EPS, use regular MSE
+                self.loss_sum += (self.eps[i] - self.predicted_eps[i])**2
+        
+        self.mse = float(self.loss_sum / len(self.eps))
         return self.mse
     
     def RSQ(self):
-        self.SSR = 0
-        self.SST = 0
-        self.eps_mean = np.mean(self.eps)
-        for i in range(len(self.eps)):
-            self.SSR += (self.eps[i] - self.predicted_eps[i])**2
-        for i in range(len(self.eps)):
-            self.SST += (self.eps[i] - self.eps_mean)**2
-        return 1 - self.SSR / self.SST
+        # Get predictions for the known data points only
+        Y_hat = self.predicted_eps[:len(self.eps)]
+        Y_t = self.eps
+        
+        # Calculate R-squared
+        ss_res = np.sum((Y_t - Y_hat) ** 2)
+        ss_tot = np.sum((Y_t - np.mean(Y_t)) ** 2)
+        r_squared = 1 - (ss_res / ss_tot)
+        return r_squared
     
 if __name__ == "__main__": 
     # Example usage
