@@ -68,7 +68,8 @@ class LSTM_test:
         X_future = np.arange(len(Y_t)-1, len(Y_t) + len(future_preds)-1)
 
         X_full = np.arange(0, len(X_t) + future_steps).reshape(-1, 1)
-
+        self.X_full = X_full
+        self.Y_hat_full = Y_hat_full
         self.X_hist = X_hist
         self.historical_preds = historical_preds.flatten()  # Flatten to match X_hist dimensions
 
@@ -83,6 +84,7 @@ class LSTM_test:
         plt.legend()
         plt.grid(True)
         plt.show()
+    
 
         # Calculate metrics
         try:

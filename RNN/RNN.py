@@ -135,4 +135,4 @@ class RNN_test:
         current_eps = Y_t[-1][0]
         self.growth_percent = growth_percent
         self.intrinsic_value = current_eps * (7.5 + 1 * growth_percent) * (4.4/bond_yield)
-        print("Intrinsic Value using Benjamin Graham's Formula(LSTM):", self.intrinsic_value)
+        print("Intrinsic Value using Benjamin Graham's Formula(RNN):", self.intrinsic_value)

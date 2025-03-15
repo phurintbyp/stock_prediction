@@ -28,7 +28,7 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=500, n_neurons=400,learning_rate=2e-5, decay=0, momentum=0.95, dt=0, auto_skip=True)
+rnn = RNN_test(file_name=file_name, n_epoch=200, n_neurons=400,learning_rate=2e-4, decay=0, momentum=1, dt=0, auto_skip=True)
 rnn.run()
 
 ###############################################
