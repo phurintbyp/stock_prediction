@@ -5,7 +5,7 @@ from lstm.testCell import LSTM_test as LSTM
 from RNN.RNN import RNN_test
 import json
 
-file_name = "./data/monthly_prices/AAPL.json"
+file_name = "./data/data_list/MSFT.json"
 
 with open(file_name, 'r') as f:
     data = json.load(f)
@@ -27,14 +27,14 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=700, n_neurons=100,learning_rate=1e-5, decay=0, momentum=0.95, dt=5, auto_skip=True)
-rnn.run()
+# rnn = RNN_test(file_name=file_name, n_epoch=700, n_neurons=100,learning_rate=1e-5, decay=0, momentum=0.95, dt=5, auto_skip=True)
+# rnn.run()
 
 ###############################################
 # LSTM
 ###############################################
 
-lstm = LSTM(file_name=file_name, n_neurons=100, n_epoch=1000, dt=5, plot_each=100, momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True)
+lstm = LSTM(file_name=file_name, n_neurons=100, n_epoch=1000, dt=3, plot_each=100, momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True)
 lstm.run()
 
 ###############################################
@@ -55,7 +55,7 @@ print("Mean Squared Error(LSTM):", f"{float(lstm.mse):.6f}")
 
 plt.figure(figsize=(12, 6))
 plt.plot(eps_prediction.extended_years[:-10], eps_prediction.predicted_eps[:-10], linestyle="-", linewidth=2, color="red", label="Linear Regression")
-plt.plot(rnn.X_full, rnn.Y_hat_full, linestyle="-", linewidth=2, color="green", label="RNN")
+# plt.plot(rnn.X_full, rnn.Y_hat_full, linestyle="-", linewidth=2, color="green", label="RNN")
 plt.plot(lstm.X_full, lstm.Y_hat_full, linestyle="-", linewidth=2, color="orange", label="LSTM")
 plt.plot(X_t, Y_t, linestyle="-", color="blue", linewidth=2, label='Historical Data')
 plt.xlabel("Year")

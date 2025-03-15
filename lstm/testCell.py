@@ -16,6 +16,16 @@ class LSTM_test:
         self.auto_skip = auto_skip
         self.intrinsic_value = None
         self.mse = None
+        self.scaler_mean = None
+        self.scaler_std = None
+
+    def standardize(self, data):
+        self.scaler_mean = np.mean(data)
+        self.scaler_std = np.std(data)
+        return (data - self.scaler_mean) / self.scaler_std
+
+    def unstandardize(self, data):
+        return data * self.scaler_std + self.scaler_mean
 
     def run(self):
         with open(self.file_name, 'r') as f:
@@ -25,7 +35,10 @@ class LSTM_test:
         Y_t = Y_t.reshape(len(Y_t), 1)
         X_t = np.arange(len(Y_t)).reshape(len(Y_t), 1)
 
-        [lstm, dense1, dense2, mse, Y_hat_hist] = RunMyLSTM(Y_t, Y_t, 
+        # Standardize the data
+        Y_t_scaled = self.standardize(Y_t)
+
+        [lstm, dense1, dense2, mse, Y_hat_hist] = RunMyLSTM(Y_t_scaled, Y_t_scaled, 
                                     n_neurons = self.n_neurons,\
                                     n_epoch=self.n_epoch, \
                                     plot_each=self.plot_each,\
@@ -37,7 +50,9 @@ class LSTM_test:
 
         self.mse = float(mse)  # Convert MSE to float
 
-        Y_hat     = ApplyMyLSTM(Y_t,lstm, dense1, dense2)
+        Y_hat_scaled = ApplyMyLSTM(Y_t_scaled, lstm, dense1, dense2)
+        # Unstandardize the predictions
+        Y_hat = self.unstandardize(Y_hat_scaled)
             
         X_plot     = np.arange(0,len(Y_t))
         X_plot_hat = np.arange(0,len(Y_hat)) + self.dt
