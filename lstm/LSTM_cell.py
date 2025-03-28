@@ -7,7 +7,8 @@ from datetime import datetime
 def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
              learning_rate = 1e-5, decay = 0, momentum = 0.95, plot_each = 50,\
              dt = 0, auto_skip = False):
-
+    np.random.seed(31)
+    random.seed(31)
     #initializing LSTM
     lstm          = LSTM(n_neurons)
     T             = max(X_t.shape)

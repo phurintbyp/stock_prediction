@@ -43,7 +43,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
         # 4) Every 'plot_each' epochs, measure & print both partial and full-series errors
         if not n % plot_each:
             # --- Partial (training-subset) error ---
-            L = 0.5 * np.dot(dY.T, dY) / (T - dt)
+            L = np.mean(np.square(dY))  # MSE
             
             # --- Full-series error ---
             # Forward pass on the entire X_t
@@ -73,7 +73,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
                 plt.pause(1)
                 plt.close()
             
-            print(f'epoch={n}, MSSE={L[0,0]:.3f}')
+            print(f'epoch={n}, MSSE={L:.3f}')
     
     # ========== Final forward pass on full data ==========
     rnn.forward(X_t)
@@ -105,7 +105,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
     
     print(f'Done! MSSE (full-series) = {L_final[0,0]:.3f}')
     
-    return (rnn, L[0,0])
+    return (rnn, L)
 
 def ApplyMyRNN(X_t, rnn):
     T = max(X_t.shape)

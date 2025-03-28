@@ -29,6 +29,8 @@ class LSTM_test:
         return data * self.scaler_std + self.scaler_mean
 
     def run(self):
+        np.random.seed(31)
+        random.seed(31)
         with open(self.file_name, 'r') as f:
             data = json.load(f)
 

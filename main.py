@@ -5,7 +5,7 @@ from lstm.testCell import LSTM_test as LSTM
 from RNN.RNN import RNN_test
 import json
 
-file_name = "./data/quarterly_prices/AAPL.json"
+file_name = "./data/data_list/AAPL.json"
 
 with open(file_name, 'r') as f:
     data = json.load(f)
@@ -16,7 +16,7 @@ values = np.array(list(data.values()))[::-1]
 X_t = np.arange(len(dates)).reshape(len(dates), -1)
 Y_t = values.reshape(len(values), 1)
 
-is_price_data = "quarterly_prices" in file_name
+is_price_data = "quarterly_prices" or "daily_prices" in file_name
 dt = 10
 
 ###############################################
@@ -30,16 +30,16 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=600, n_neurons=100, learning_rate=1e-5, 
-               decay=0, momentum=0.98, dt=dt, auto_skip=True, price=is_price_data)
+rnn = RNN_test(file_name=file_name, n_epoch=600, n_neurons=200, learning_rate=1e-4, 
+               decay=0, momentum=0.98, dt=dt, auto_skip=False, price=is_price_data)
 rnn.run()
 
 ###############################################
 # LSTM
 ###############################################
 
-lstm = LSTM(file_name=file_name, n_epoch=600, n_neurons=100, dt=dt, plot_each=100, 
-            momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True, price=is_price_data)
+lstm = LSTM(file_name=file_name, n_epoch=800, n_neurons=150, dt=dt, plot_each=100, 
+            momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=False, price=is_price_data)
 lstm.run()
 
 ###############################################
