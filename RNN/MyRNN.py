@@ -48,13 +48,14 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
             # --- Full-series error ---
             # Forward pass on the entire X_t
             rnn.forward(X_t)
+            Y_hat_epoch = ApplyMyRNN(Y_t, rnn)  # Same as final graph
             
             # Plot the full-series predictions
             M = np.max(np.vstack((rnn.Y_hat, Y_t)))
             m = np.min(np.vstack((rnn.Y_hat, Y_t)))
             
             plt.plot(X_plot, Y_t)
-            plt.plot(X_plot + dt, rnn.Y_hat)  # Add dt to X_plot for prediction
+            plt.plot(X_plot + dt, Y_hat_epoch)  # Predictions starting from dt onwards
             plt.xlabel('x')
             plt.ylabel('y')
             plt.legend(['y', '$\\hat{y}$'])
@@ -88,7 +89,7 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
     m = np.min(np.vstack((rnn.Y_hat, Y_t)))
     
     plt.plot(X_plot, Y_t)
-    plt.plot(X_plot + dt, rnn.Y_hat)
+    plt.plot(X_plot + dt, Y_hat_epoch)
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend(['y', '$\\hat{y}$'])

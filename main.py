@@ -17,7 +17,7 @@ X_t = np.arange(len(dates)).reshape(len(dates), -1)
 Y_t = values.reshape(len(values), 1)
 
 is_price_data = "quarterly_prices" in file_name
-dt = 12
+dt = 10
 
 ###############################################
 # Linear Regressionq
@@ -30,15 +30,15 @@ eps_prediction.run()
 # RNN
 ###############################################
 
-rnn = RNN_test(file_name=file_name, n_epoch=400, n_neurons=100, learning_rate=1e-5, 
-               decay=0, momentum=0.95, dt=dt, auto_skip=True, price=is_price_data)
+rnn = RNN_test(file_name=file_name, n_epoch=600, n_neurons=100, learning_rate=1e-5, 
+               decay=0, momentum=0.98, dt=dt, auto_skip=True, price=is_price_data)
 rnn.run()
 
 ###############################################
 # LSTM
 ###############################################
 
-lstm = LSTM(file_name=file_name, n_epoch=300, n_neurons=100, dt=dt, plot_each=100, 
+lstm = LSTM(file_name=file_name, n_epoch=600, n_neurons=100, dt=dt, plot_each=100, 
             momentum=0.98, decay=0, learning_rate=1e-4, auto_skip=True, price=is_price_data)
 lstm.run()
 
@@ -57,6 +57,10 @@ print("Growth Rate(LSTM):", f"{lstm.growth_percent:.2f}%")
 print("\nMean Squared Error(Linear Regression):", f"{float(eps_prediction.mse):.6f}")
 print("Mean Squared Error(RNN):", f"{rnn.mse:.6f}")
 print("Mean Squared Error(LSTM):", f"{lstm.mse:.6f}")
+
+print("\nRoot Mean Squared Error(Linear Regression):", f"{eps_prediction.rmse:.6f}")
+print("Root Mean Squared Error(RNN):", f"{rnn.rmse:.6f}")
+print("Root Mean Squared Error(LSTM):", f"{lstm.rmse:.6f}")
 
 plt.figure(figsize=(12, 6))
 plt.plot(eps_prediction.extended_years[:(dt + len((list(data.values()))))], eps_prediction.predicted_eps[:(dt + len((list(data.values()))))], linestyle="-", linewidth=2, color="red", label="Linear Regression")

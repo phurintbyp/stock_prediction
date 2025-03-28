@@ -17,6 +17,7 @@ class EPSPrediction:
         self.mse = None
         self.price = "quarterly_prices" in file_name
         self.dt = dt
+        self.rmse = None
 
     def load_data(self):
         with open(self.file_name, 'r') as file:
@@ -71,7 +72,7 @@ class EPSPrediction:
             self.intrinsic_value = 0.0
             
         self.mse = self.MSE()
-        
+        self.rmse = self.RMSE()
         print("Intrinsic Value using Benjamin Graham's Formula:", self.intrinsic_value)
         print("Current EPS:", current_eps)
         print(f"Future EPS {self.dt} years from now:", future_eps)
@@ -99,6 +100,10 @@ class EPSPrediction:
         
         self.mse = float(self.loss_sum / len(self.eps))
         return self.mse
+    
+    def RMSE(self):
+        self.rmse = np.sqrt(self.mse)
+        return self.rmse
     
     def RSQ(self):
         # Get predictions for the known data points only

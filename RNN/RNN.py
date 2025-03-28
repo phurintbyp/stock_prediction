@@ -56,7 +56,7 @@ class RNN_test:
             auto_skip=self.auto_skip
         )
         self.mse = float(mse)
-
+        self.rmse = np.sqrt(self.mse)
         Y_hat_standardized = ApplyMyRNN(Y_t_standardized, rnn)
         Y_hat = self.unstandardize(Y_hat_standardized)
 
@@ -70,6 +70,7 @@ class RNN_test:
         plt.plot(X_full, Y_hat, 'g-', linewidth=2, label='LSTM Prediction')
         plt.axvline(x=len(Y_t)-1, color='k', linestyle='--', label='Prediction Start')
         plt.legend(['y', '$\hat{y}$'])
+        plt.title('Final Prediction')
         plt.show()
 
         Y_t_last = Y_t[-1][0]

@@ -50,6 +50,7 @@ class LSTM_test:
                                     auto_skip=self.auto_skip)
 
         self.mse = float(mse)  # Convert MSE to float
+        self.rmse = np.sqrt(self.mse)
 
         Y_hat_scaled = ApplyMyLSTM(Y_t_scaled, lstm, dense1, dense2)
         # Unstandardize the predictions
