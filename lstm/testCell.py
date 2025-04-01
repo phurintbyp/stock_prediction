@@ -38,7 +38,6 @@ class LSTM_test:
         Y_t = Y_t.reshape(len(Y_t), 1)
         X_t = np.arange(len(Y_t)).reshape(len(Y_t), 1)
 
-        # Standardize the data
         Y_t_scaled = self.standardize(Y_t)
 
         [lstm, dense1, dense2, mse, Y_hat_hist] = RunMyLSTM(Y_t_scaled, Y_t_scaled, 
@@ -51,11 +50,10 @@ class LSTM_test:
                                     learning_rate=self.learning_rate,\
                                     auto_skip=self.auto_skip)
 
-        self.mse = float(mse)  # Convert MSE to float
+        self.mse = float(mse)
         self.rmse = np.sqrt(self.mse)
 
         Y_hat_scaled = ApplyMyLSTM(Y_t_scaled, lstm, dense1, dense2)
-        # Unstandardize the predictions
         Y_hat = self.unstandardize(Y_hat_scaled)
             
         X_plot     = np.arange(0,len(Y_t))
@@ -75,13 +73,12 @@ class LSTM_test:
 
         # Calculate metrics
         try:
-            if self.price is True:  # Added missing colon
+            if self.price is True:
                 self.growth_percent = 0.0
                 self.intrinsic_value = float(Y_hat_last)
             else:
-                # Calculate growth rate using the ratio of last predicted value to last actual value
                 self.growth_percent = float(((Y_hat[-1] / Y_t[-1]) ** (1/self.dt) - 1) * 100)
-                current_eps = float(Y_t[-1])  # Use the last actual value
+                current_eps = float(Y_t[-1])
                 bond_yield = 4.8
                 self.intrinsic_value = float(current_eps * (7.5 + 1 * self.growth_percent) * (4.4/bond_yield))
         except Exception as e:

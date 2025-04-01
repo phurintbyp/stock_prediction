@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 def close_on_key(event):
-    """Close the current figure if the '0' key is pressed."""
     if event.key == '0':
         plt.close(event.canvas.figure)
 
@@ -11,16 +10,14 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
              learning_rate=1e-5, decay=0.0, momentum=0.8,
              plot_each=100, dt=0, auto_skip=False):
     
-    # initializing RNN
     rnn = RNN(n_neurons, Activation)
     optimizer = Optimizer_SGD(learning_rate, decay, momentum)
     T = max(X_t.shape)
     X_plot = np.arange(0, T)
     
-    # Separate the training subset (X_t_dt, Y_t_dt) vs. the full series (X_t, Y_t)
     if dt != 0:
-        X_t_dt = Y_t[:-dt]   # for input
-        Y_t_dt = Y_t[dt:]    # for target
+        X_t_dt = Y_t[:-dt]
+        Y_t_dt = Y_t[dt:]
         X_plots = X_plot[dt:]
     else:
         X_t_dt = X_t
@@ -30,32 +27,24 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
     print("RNN is running...")
     
     for n in range(n_epoch):
-        # 1) Forward on training subset
         rnn.forward(X_t_dt)
-        # 2) Compute training-subset error
         dY = rnn.Y_hat - Y_t_dt
-        # 3) Backprop & update
         rnn.backward(dY)
         optimizer.pre_update_params()
         optimizer.update_params(rnn)
         optimizer.post_update_params()
         
-        # 4) Every 'plot_each' epochs, measure & print both partial and full-series errors
         if not n % plot_each:
-            # --- Partial (training-subset) error ---
-            L = np.mean(np.square(dY))  # MSE
+            L = np.mean(np.square(dY))
             
-            # --- Full-series error ---
-            # Forward pass on the entire X_t
             rnn.forward(X_t)
-            Y_hat_epoch = ApplyMyRNN(Y_t, rnn)  # Same as final graph
+            Y_hat_epoch = ApplyMyRNN(Y_t, rnn)
             
-            # Plot the full-series predictions
             M = np.max(np.vstack((rnn.Y_hat, Y_t)))
             m = np.min(np.vstack((rnn.Y_hat, Y_t)))
             
             plt.plot(X_plot, Y_t)
-            plt.plot(X_plot + dt, Y_hat_epoch)  # Predictions starting from dt onwards
+            plt.plot(X_plot + dt, Y_hat_epoch)
             plt.xlabel('x')
             plt.ylabel('y')
             plt.legend(['y', '$\\hat{y}$'])
@@ -75,7 +64,6 @@ def RunMyRNN(X_t, Y_t, Activation, n_epoch=500, n_neurons=400,
             
             print(f'epoch={n}, MSSE={L:.3f}')
     
-    # ========== Final forward pass on full data ==========
     rnn.forward(X_t)
     if dt != 0:
         dY_full = rnn.Y_hat[:-dt] - Y_t[dt:]
@@ -111,7 +99,6 @@ def ApplyMyRNN(X_t, rnn):
     T = max(X_t.shape)
     Y_hat = np.zeros((T, 1))
     
-    # Re-initialize hidden states
     H = [np.zeros((rnn.n_neurons, 1)) for _ in range(T + 1)]
     ht = H[0]
     
@@ -133,20 +120,16 @@ class RNN:
         self.T = max(X_t.shape)
         self.X_t = X_t
         
-        # Prediction vector of y
         self.Y_hat = np.zeros((self.T, 1))
-        # Hidden states
         self.H = [np.zeros((self.n_neurons, 1)) for _ in range(self.T + 1)]
         
-        # Initialize gradients to zero
         self.dWx = np.zeros((self.n_neurons, 1))
         self.dWh = np.zeros((self.n_neurons, self.n_neurons))
         self.dWy = np.zeros((1, self.n_neurons))
         self.dbiases = np.zeros((self.n_neurons, 1))
         
-        # RNN cell pass
         ACT = [self.Activation for _ in range(self.T)]
-        ht = self.H[0]  # initial state
+        ht = self.H[0]
         ACT, H, Y_hat = self.RNNCell(X_t, ht, ACT, self.H, self.Y_hat)
         
         self.Y_hat = Y_hat
@@ -178,7 +161,6 @@ class RNN:
         Wy = self.Wy
         Wh = self.Wh
         
-        # Start with the final time step
         dht = np.dot(Wy.T, dvalues[-1].reshape(1, 1))
         
         # BPTT

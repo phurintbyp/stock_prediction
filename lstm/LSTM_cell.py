@@ -9,17 +9,16 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
              dt = 0, auto_skip = False):
     np.random.seed(31)
     random.seed(31)
-    #initializing LSTM
+
     lstm          = LSTM(n_neurons)
     T             = max(X_t.shape)
-    dense1        = Layer_Dense(n_neurons, n_neurons)  # Changed: First dense layer n_neurons -> n_neurons
-    dense2        = Layer_Dense(n_neurons, 1)         # Changed: Second dense layer n_neurons -> 1
+    dense1        = Layer_Dense(n_neurons, n_neurons)
+    dense2        = Layer_Dense(n_neurons, 1)
     optimizerLSTM = Optimizer_SGD_LSTM(learning_rate, decay, momentum)
     optimizer     = Optimizer_SGD(learning_rate, decay, momentum)
     
     X_plot    = np.arange(0,T)
     
-    # Add loss tracking
     loss_history = []
     
     if dt != 0:
@@ -55,14 +54,12 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             H = np.array(lstm.H)
             H = H.reshape((H.shape[0],H.shape[1]))
             
-            #states to Y_hat
             dense1.forward(H[1:,:])
             dense2.forward(dense1.output)
 
             Y_hat = dense2.output
     
             dY = Y_hat - Y_t_cut
-            #L  = 0.5*np.dot(dY.T,dY)/T_cut
             
             dense2.backward(dY)
             dense1.backward(dense2.dinputs)
@@ -88,7 +85,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             H = np.array(lstm.H)
             H = H.reshape((H.shape[0],H.shape[1]))
             
-            #states to Y_hat
             dense1.forward(H[1:,:])
             dense2.forward(dense1.output)
 
@@ -103,10 +99,8 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
             
             print(f"Epoch #{n} MSE: {L:.6f}")
 
-            # Store metrics in history
             loss_history.append(L)
             
-            # Create loss plot
             plt.figure(figsize=(12, 4))
             plt.subplot(1, 2, 1)
             M = np.max(np.vstack((Y_hat,Y_t)))
@@ -120,7 +114,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
                               m, M, color = 'k', alpha = 0.1)
             plt.plot([X_plot[-1], X_plot[-1]], [m, M],'k-',linewidth = 3)
             
-            # Add loss plot
             plt.subplot(1, 2, 2)
             epochs = np.arange(0, len(loss_history)) * plot_each
             plt.plot(epochs, loss_history, 'b-', label='MSE')
@@ -137,7 +130,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
                 plt.pause(1)
                 plt.close()
         
-        #updating learning rate, if decay
         optimizerLSTM.pre_update_params()
         optimizer.pre_update_params()
         
@@ -146,7 +138,6 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     H = np.array(lstm.H)
     H = H.reshape((H.shape[0],H.shape[1]))
     
-    #states to Y_hat
     dense1.forward(H[1:,:])
     dense2.forward(dense1.output)
 
@@ -157,10 +148,8 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     else:
         dY    = Y_hat - Y_t
                 
-    # Correct final MSE calculation
     L = np.mean(np.square(dY))
     
-    # Final plot with loss
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)
     plt.plot(X_plot, Y_t)
@@ -180,9 +169,9 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     plt.grid(True)
     
     plt.tight_layout()
-    plt.show(block=True)  # Always block for the final plot
+    plt.show(block=True)
     
-    with open('./lstm/training_metrics.txt', 'a') as f:  # Changed 'w' to 'a'
+    with open('./lstm/training_metrics.txt', 'a') as f:
         f.write(f"\n\nTraining Run - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("-" * 50 + "\n")
         f.write(f"Epochs: {n_epoch}\n")
@@ -203,19 +192,15 @@ def RunMyLSTM(X_t, Y_t, n_epoch = 500, n_neurons = 500,\
     
 def ApplyMyLSTM(X_t, lstm, dense1, dense2):
     T = max(X_t.shape)
-    # Initialize hidden and cell states
     lstm.H = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
     lstm.C = [np.zeros((lstm.n_neurons,1)) for t in range(T+1)]
 
-    # Forward pass through LSTM
     lstm.forward(X_t)
     
-    # Process hidden states to predictions
     H = np.array(lstm.H)
     H = H.reshape((H.shape[0], H.shape[1]))
     
-    # Only use relevant hidden states for prediction (matching input length)
-    dense1.forward(H[1:T+1])  # Changed from H[0:-1]
+    dense1.forward(H[1:T+1])
     dense2.forward(dense1.output)
     
     Y_hat = dense2.output
@@ -223,47 +208,6 @@ def ApplyMyLSTM(X_t, lstm, dense1, dense2):
     return Y_hat
 
 ####################################
-
-    # """Generate predictions for both historical data and future steps"""
-    # # Get historical predictions first
-    # lstm.forward(X_t)
-    # H = np.array(lstm.H)
-    
-    # # Process historical predictions
-    # historical_preds = []
-    # for t in range(1, H.shape[0]):
-    #     h_t = H[t]  # Current hidden state
-    #     # Forward through dense layers
-    #     dense1.forward(h_t.T)  # Shape should be (1, n_neurons)
-    #     dense2.forward(dense1.output)
-    #     historical_preds.append(dense2.output[0][0])
-    
-    # historical_preds = np.array(historical_preds).reshape(-1, 1)
-
-    # # Generate future predictions if requested
-    # if forecast_steps > 0:
-    #     future_preds = []
-    #     current_h = H[-1]  # Last hidden state
-    #     last_input = X_t[-1].reshape(1, 1)
-
-    #     for _ in range(forecast_steps):
-    #         # Forward through LSTM
-    #         lstm.forward(last_input)
-    #         current_h = lstm.H[1]
-            
-    #         # Forward through dense layers
-    #         dense1.forward(current_h.T)
-    #         dense2.forward(dense1.output)
-    #         next_pred = dense2.output[0][0]
-            
-    #         future_preds.append(next_pred)
-    #         last_input = np.array([[next_pred]])
-
-    #     future_preds = np.array(future_preds).reshape(-1, 1)
-    #     print(future_preds)
-    #     return np.vstack([historical_preds, future_preds])
-
-    # return historical_preds
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -311,34 +255,26 @@ class LSTM():
         self.C         = [np.zeros((n_neurons,1)) for t in range(T+1)]
         self.C_tilde   = [np.zeros((n_neurons,1)) for t in range(T)]
         
-        #keeping track of forget (f), output (o) and input (i) gate for BPTT
         self.F         = [np.zeros((n_neurons,1)) for t in range(T)]
         self.O         = [np.zeros((n_neurons,1)) for t in range(T)]
         self.I         = [np.zeros((n_neurons,1)) for t in range(T)]
         
-        #initializing dweights
-        #forget gate
         self.dUf = 0.1*np.random.randn(n_neurons, 1)
         self.dbf = 0.1*np.random.randn(n_neurons, 1)
         self.dWf = 0.1*np.random.randn(n_neurons, n_neurons)
         
-        #imput gate
         self.dUi = 0.1*np.random.randn(n_neurons, 1)
         self.dbi = 0.1*np.random.randn(n_neurons, 1)
         self.dWi = 0.1*np.random.randn(n_neurons, n_neurons)
         
-        #output gate
         self.dUo = 0.1*np.random.randn(n_neurons, 1)
         self.dbo = 0.1*np.random.randn(n_neurons, 1)
         self.dWo = 0.1*np.random.randn(n_neurons, n_neurons)
         
-        #C tilde
         self.dUg = 0.1*np.random.randn(n_neurons, 1)
         self.dbg = 0.1*np.random.randn(n_neurons, 1)
         self.dWg = 0.1*np.random.randn(n_neurons, n_neurons)
         
-        
-        #instances of activation functions for BPTT
         Sigmf    = [Sigmoid() for i in range(T)]
         Sigmi    = [Sigmoid() for i in range(T)]
         Sigmo    = [Sigmoid() for i in range(T)]
@@ -349,8 +285,8 @@ class LSTM():
         self.X_t = X_t
 
         
-        ht       = self.H[0]# initial state vector
-        ct       = self.C[0]# initial state vector
+        ht       = self.H[0]
+        ct       = self.C[0]
 
         
         [H, C, Sigmf, Sigmi, Sigmo, Tanh1, Tanh2, F, O, I, C_tilde]\
@@ -421,9 +357,7 @@ class LSTM():
     
     
     def backward(self, dvalues):
-        
-        #dht = dinputs from the dense layer
-        
+
         T       = self.T
         H       = self.H
         C       = self.C
@@ -442,17 +376,13 @@ class LSTM():
         
         dht     = dvalues[-1,:].reshape(self.n_neurons,1)
         
-        #actual BPTT
         for t in reversed(range(T)):
             
-            #dy = dinputs[t].reshape(1,1)
             xt = X_t[t].reshape(1,1)
             
             Tanh2[t].backward(dht)
             dtanh2 = Tanh2[t].dinputs
             
-            #np.multiply, not np.dot because it was a element wise 
-            #multiplication in the forward part
             dhtdtanh = np.multiply(O[t], dtanh2)
             
             dctdft       = np.multiply(dhtdtanh,C[t-1])
@@ -505,15 +435,13 @@ class LSTM():
                   dvalues[t-1,:].reshape(self.n_neurons,1)
 
         self.H  = H
-###############################################################################
-# different activation options
-###############################################################################
+
 class Sigmoid:
         
     def forward(self, M):
         
         sigm        = np.clip(1/(1 + np.exp(-M)), 1e-7, 1 - 1e-7)
-        self.output = sigm #needed for back prop
+        self.output = sigm
         self.inputs = M
             
     def backward(self, dvalues):
@@ -522,9 +450,7 @@ class Sigmoid:
         deriv        = np.multiply(sigm, (1 - sigm))
         self.dinputs = np.multiply(deriv, dvalues)
         
-###############################################################################
-#
-###############################################################################
+
 class Tanh:
         
     def forward(self, inputs):
@@ -535,9 +461,6 @@ class Tanh:
         deriv        = 1 - self.output**2
         self.dinputs = np.multiply(deriv, dvalues)
         
-###############################################################################
-# dense layer
-###############################################################################
 class Layer_Dense():
     
     def __init__(self, n_inputs, n_neurons):

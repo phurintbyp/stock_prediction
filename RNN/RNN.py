@@ -47,10 +47,10 @@ class RNN_test:
             X_t,
             Y_t_standardized,
             Activation=Tanh(),
-            n_epoch=self.n_epoch,         # can increase more if needed
-            n_neurons=self.n_neurons,        # fewer neurons for small dataset
-            learning_rate=self.learning_rate,  # higher LR to avoid slow/stuck training
-            decay=self.decay,          # tiny weight decay
+            n_epoch=self.n_epoch,
+            n_neurons=self.n_neurons,
+            learning_rate=self.learning_rate,
+            decay=self.decay,
             momentum=self.momentum,        
             dt=self.dt,
             auto_skip=self.auto_skip
